@@ -69,73 +69,7 @@ def get_basic_info_about_shop(shop_url):
 
 def get_products_info(urls, mode):
     result = list()
-    headers = {"user-agent": UserAgent().chrome}
-    for url in urls:
-        product_id = url.split("-")[-1]
-        api_url = f"https://api.kazanexpress.ru/api/v2/product/{product_id}"
-        response = requests.get(url=api_url, headers=headers)
-        json_object = response.json()["payload"]["data"]
-        name = json_object["title"]
-
-        category = json_object["category"]["title"]
-        sub_category = json_object["category"]
-        parent = json_object["category"]["parent"]
-        while parent is not None:
-            sub_category = sub_category["parent"]
-            parent = sub_category["parent"]
-            category = f"{sub_category['title']} - {category}"
-
-        rating = json_object["rating"]
-        amount_reviews = json_object["reviewsAmount"]
-        amount_orders = json_object["ordersAmount"]
-        amount_products = json_object['totalAvailableAmount']
-        description = BeautifulSoup(json_object["description"], "lxml").text
-        additional_info = "; ".join(json_object["attributes"])
-
-        images = json_object["photos"]
-        images = [image["photo"]["720"]["high"] for image in images]
-        images = "; ".join(images)
-
-        comment_objects = json_object["comments"]
-        comments = dict()
-        for comment_object in comment_objects:
-            comments[comment_object["commentType"]] = BeautifulSoup(comment_object["comment"], "lxml").text
-
-        characteristic_objects = json_object["characteristics"]
-        characteristics = dict()
-        for characteristic_object in characteristic_objects:
-            values = characteristic_object["values"]
-            characteristics[characteristic_object["title"]] = [value["title"] for value in values]
-        characteristics_list = list(characteristics.keys())
-
-        if len(characteristics) > 0:
-            prices = dict()
-            price_objects = json_object["skuList"]
-            for price_object in price_objects:
-                index = price_object["characteristics"][0]["charIndex"]
-                value_index = price_object["characteristics"][0]["valueIndex"]
-                prices[characteristics[characteristics_list[index]][value_index]] = dict()
-                full_price = price_object["fullPrice"]
-                purchase_price = price_object["purchasePrice"]
-                prices[characteristics[characteristics_list[index]][value_index]]["full_price"] = full_price
-                prices[characteristics[characteristics_list[index]][value_index]]["purchase_price"] = purchase_price
-        else:
-            prices = {"full_price": json_object["skuList"][0]["fullPrice"],
-                      "purchase_price": json_object["skuList"][0]["purchasePrice"]}
-        if mode == "store":
-            result.append({"name": name, "characteristics": characteristics, "description": description,
-                           "category": category, "additional_info": additional_info, "prices": prices,
-                           "amount_orders": amount_orders, "amount_reviews": amount_reviews, "rating": rating,
-                           "amount_products": amount_products, "url": url, "images": images})
-        else:
-            domain = "https://kazanexpress.ru/"
-            seller_name = json_object["seller"]["title"]
-            seller_url = domain + json_object["seller"]["link"]
-            result.append({"name": name, "characteristics": characteristics, "description": description,
-                           "category": category, "additional_info": additional_info, "prices": prices,
-                           "amount_orders": amount_orders, "amount_reviews": amount_reviews, "rating": rating,
-                           "amount_products": amount_products, "images": images, "url": url, "seller": seller_name,
-                           "seller_url": seller_url})
+    pass #this is demo version
     return result
 
 
